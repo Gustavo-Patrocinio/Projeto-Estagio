@@ -77,7 +77,7 @@ app.post("/livro", async (req,res) =>{
 
     const result = await client.query("INSERT INTO livros (COD_BARRAS, NOME_LIVRO, CATEGORIA, DISPONIBILIDADE) VALUES ($1,$2,$3,$4) RETURNING*", [codigoBarras, nome, categoria, disponibilidade]);
 
-    res.status(201).json({message:"Livro adicionado", livro: result.rows[id]})
+    res.status(201).json({message:"Livro adicionado", livro: result.rows[0]})
 
   }catch(error){
     console.error(error)
@@ -106,6 +106,20 @@ app.put("/livro/:id", async (req,res) =>{
     res.status(500).json({message:"Erro ao alterar livro", error:error.message});
   }
 })
+
+app.delete("/livro/:id", async (req,res) => {
+  try{
+
+    const {id} = req.params;
+    result = await client.query("DELETE FROM livros WHERE ID_LIVRO = $1", [id]);
+    res.status(204).send();
+  } catch(error){
+    console.error(error);
+    res.status(500).json({message:"Não foi possivel remover o livro", error:error.message});
+  }
+})
+
+
 // Iniciando servidor
 app.listen(PORT, ()=>{
   console.log(`Servidor rodando na porta ${PORT}`);
