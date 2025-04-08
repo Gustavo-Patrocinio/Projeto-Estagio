@@ -1,10 +1,13 @@
 // importando o servidor e o banco
 const express = require("express");
-const client = require("./index");
+const client = require("./database");
 
 // inicializando servidor 
 const app = express();
 const PORT = 3000;
+
+const cors = require("cors");
+app.use(cors());
 
 // permite o express processar requisicoes em json
 app.use(express.json());
@@ -18,7 +21,6 @@ app.post("/pessoa", async (req, res) => {
     // inserindo no banco as variaveis do body
     const result = await client.query("INSERT INTO pessoas (cpf, status_pessoa, nome, idade) VALUES ($1,$2,$3,$4) RETURNING *",
       [cpf,status,nome,idade]);
-      
       // Resposta de concluido
       res.status(201).json({message:"Pessoa adicionada", pessoa: result.rows[0]});
     } catch (error) {
