@@ -32,6 +32,7 @@
        Idade: {{ usuario.idade }} anos <br>
        CPF: {{ usuario.cpf }} <br>
        Status: {{ usuario.status }} <br>
+       <button @click="editarUsuario(usuario.id)">Editar</button>
        <button @click="deletarUsuario(usuario.id)">Deletar</button>
        <br> <br>
       </li>
@@ -42,7 +43,7 @@
 <script>
 // import axios from 'axios';
 import {db} from '@/firebase';
-import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, updateDoc, doc } from 'firebase/firestore';
 
 export default {
   // data = retorna um objeto com variaveis reativas
@@ -89,6 +90,22 @@ export default {
     // deletar um documento a partir do id
     async deletarUsuario(id){
       await deleteDoc(doc(db,'usuarios',id));
+      this.buscarUsuarios();
+    },
+    async editarUsuario(id){
+      const nomeAtualizado = prompt("Novo Nome");
+      const idadeAtualizado = prompt("Nova Idade");
+      const cpfAtualizado = prompt("Novo CPF");
+      const statusAtualizado = prompt("Novo Status: \n1- ativo\n2- inativo");
+
+      const usuarioRef = doc(db,'usuarios',id);
+      await updateDoc(usuarioRef, {
+        nome: nomeAtualizado,
+        idade: idadeAtualizado,
+        cpf: cpfAtualizado,
+        status: statusAtualizado,
+      });
+
       this.buscarUsuarios();
     }
   },
